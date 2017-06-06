@@ -37,14 +37,38 @@ Note : If you are running Windows : it would be `source env/Scripts/activate`
 
 ## Load Training and Testing Data
 
-1. Import the following csv files from your cloned source directory to your HANA database:
+There are two files to import into your HANA database. 
 
- - tensordata.csv
- - tensortestdata.csv
+ - tensordata.csv: This file contains the tensorflow training data to train the model.
+ - tensortestdata.csv: This contains the testdata to exercise the model.
+ 
+Here are three different options for loading the data. Option 1 is for loading data from the client. Option 2a and 2b require that you have ftp or scp access to the HANA database server.
 
-  Note : [Tutorial to Import CSV File into SAP HANA](https://archive.sap.com/documents/docs/DOC-27960)
-  
-  If you have ftp or scp access to your HANA database server and can copy the source files over to the server, you can execute the load_data.sh script from the shell on the HANA server. Alternatively, you can execute the tensordata.sql sql script using the command line hdbsql utility.
+Option 1: Follow this [Tutorial to Import CSV File into SAP HANA](https://archive.sap.com/documents/docs/DOC-27960) if you want to install the data to the server using [HANA Tools](https://tools.hana.ondemand.com/#hanatools).
+
+Option 2: FTP the data to the HANA server and then use either option 2a or option 2b to load it into the database.
+
+- Create a data directory on the HANA server. 
+- Upload the following files to this directory:
+-- load_data.sh
+-- tensordata.csv
+-- tensortestdata.csv
+-- tensordata.sql
+
+- Make sure you are logged in as a user with rights to execute the hdbsql utility. You can use the sid adm user. On the HANA Express database, this is the user `hxeadm`.
+
+Option 2a: Load the data using the load_data.sh script.
+
+- Navigate to the data directory created above. 
+- Make the load_data.sh file executable: chmod a+x load_data.sh.
+- Run the load_data.sh script using the instructions explained in the load_data.sh help: "load_data.sh -h".
+
+Option 2b: Load the data on the server using HANA's command line `hdbsql` utility. 
+
+- Navigate to the data directory created above. 
+- Read the instructions in the tensordata.sql file to see what values to change. Make the changes and save.
+- Run the hdbsql utility and point to the tensordata.sql file.
+--  hdbsql -u <Your User> -d <YourDatabase> -p <YourPassword> -i <YourInstance> -I tensordata.sql
 
 ## Edit the Python File
 

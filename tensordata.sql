@@ -1,6 +1,10 @@
 --This script can be executed using the hdbsql command line with the following syntax
---hdbsql -u <Your User> -d <YourDatabase> -p <YourPassword> -i <YourInstance> -I tensordata.sql
+--This script assumes that you are creating the schema, TENSORFLOW.
 
+--Please replace <DATA_FILE_DIRECTORY> with the directory containing the csv files before executing the script.
+--After replacing the <DATA_FILE_DIRECTORY>, you can run this script using the following command as the 
+--SAP HANA sid adm user (e.g. hxeadm on HANA Express):
+--  hdbsql -u <Your User> -d <YourDatabase> -p <YourPassword> -i <YourInstance> -I tensordata.sql
 
 --Drop the schema and all its objects
 DROP SCHEMA TENSORFLOW CASCADE;
@@ -58,24 +62,24 @@ CREATE COLUMN TABLE "TENSORFLOW"."TENSORFLOWRESULT" ("ID" TIMESTAMP PRIMARY KEY,
  
 --Change the file_path to the path where your files are located.
 ALTER SYSTEM ALTER CONFIGURATION('nameserver.ini', 'SYSTEM') 
-   SET ('import_export', 'csv_import_path_filter') = '/usr/sap/HXE/home/downloads/tensorflow/' 
+   SET ('import_export', 'csv_import_path_filter') = '<DATA_FILE_DIRECTORY>' 
    WITH RECONFIGURE;
 
 --Change the file_path to the path where your files are located and update schema if required.
-IMPORT FROM CSV FILE '/usr/sap/HXE/home/downloads/tensorflow/tensordata.csv' INTO "TENSORFLOW"."TENSORDATA"
+IMPORT FROM CSV FILE '<DATA_FILE_DIRECTORY>/tensordata.csv' INTO "TENSORFLOW"."TENSORDATA"
    WITH RECORD DELIMITED BY '\n'
    FIELD DELIMITED BY ','
    SKIP FIRST 1 ROW
-   ERROR LOG '/usr/sap/HXE/home/downloads/tensorflow/tensordata.err';
+   ERROR LOG '<DATA_FILE_DIRECTORY>/tensordata.err';
    
 --Change the file_path to the path where your files are located and update schema if required.
-IMPORT FROM CSV FILE '/usr/sap/HXE/home/downloads/tensorflow/tensortestdata.csv' INTO "TENSORFLOW"."TENSORTESTDATA"
+IMPORT FROM CSV FILE '<DATA_FILE_DIRECTORY>/tensortestdata.csv' INTO "TENSORFLOW"."TENSORTESTDATA"
    WITH RECORD DELIMITED BY '\n'
    FIELD DELIMITED BY ','
    SKIP FIRST 1 ROW
-   ERROR LOG '/usr/sap/HXE/home/downloads/tensorflow/tensortestdata.err'; 
+   ERROR LOG '<DATA_FILE_DIRECTORY>/tensortestdata.err'; 
 
---Change the schema if required.   
+--Run these select statements to be sure the data was loaded.   
 SELECT count(*) AS ROWSLOADED from "TENSORFLOW"."TENSORDATA" 
  UNION
 SELECT count(*) from "TENSORFLOW"."TENSORTESTDATA";

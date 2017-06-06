@@ -43,14 +43,14 @@ OPTIONS
 
       -f, --filepath
              The path where the tensordata.csv and tensortestdata.csv files can be found.
-             The default value is "/usr/sap/HXE/home/downloads/tensorflow/".
+             The default value is the present working directory ${PWD}.
              
       -s, --schema
              The schema in which the example tables will be created.
              The default value is "TENSORFLOW".
 
 EXAMPLES
-  Accept all the default values.
+  Accept all the default values. Note: Password does not have a default value.
     $base_name -p myPassword
 
   Create the objects with the user "MYUSER", password "MYPASSWORD", database "MYDB", instance "00", and filepath "/tmp/myfiles/"
@@ -151,7 +151,7 @@ USER_NAME="SYSTEM"
 PASSWORD=""
 INSTANCE="90"
 DATABASE="SystemDB"
-FILE_PATH="/usr/sap/HXE/home/downloads/tensorflow/"
+FILE_PATH=${PWD}/
 SCHEMA="TENSORFLOW"
 
 #Error file used to capture errors
