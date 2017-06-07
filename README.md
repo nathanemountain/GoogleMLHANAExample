@@ -124,4 +124,43 @@ def readDataFromSAPHana():
 
 2. The application has inserted results back into the database table named as `TENSORFLOWRESULT`.
 
-3. Expose the data collected from the application as Odata Service using [this tutorial](https://www.sap.com/developer/tutorials/xsa-xsodata.html)
+## Deploy as a Flask Application
+
+1. Navigate into *flaskTFResults* folder and locate the *main.py* file. Make the following edits to the `readDataFromSAPHana` and `getConnection` function of the *main.py* file.
+
+  - Replace the YOUR_HXE_HOST_NAME, USER_ID, USER_PASSWORD with your values.
+  - Replace the YOUR_SCHEMA with your values.
+  - If you are not using a multi-tenant HANA Database with instance number 90, you will also need to change your port.
+
+```
+def readDataFromSAPHana():
+    connection = getConnection()
+
+    if not connection.isconnected():
+        return 'HANA Server not accessible'
+    #Connect to the database
+
+    cursor = connection.cursor()
+    #This is the data used to Train the Tensor Flow model
+    cursor.execute("SELECT * FROM <YOUR_SCHEMA>.TENSORFLOWRESULT")
+    myData = cursor.fetchall()
+    cursor.close()
+    print(myData)
+    return myData
+
+def getConnection():
+    myConnection = db.connect(
+          # replace with the ip address of your HXE Host (This may be a virtual machine)
+          host='<HXE_HOST>',
+          # 39013 is the systemDB port for HXE on the default instance of 90.
+          # Replace 90 with your instance number as needed (e.g. 30013 for instance 00)
+          port=39015,
+          #Replace user and password with your user and password.
+          user='<USER_ID>',
+          password='<PASSWORD>'
+          )
+    return myConnection
+
+```
+
+2. This app can then be deployed on Google Cloud App Engine. Follow this [tutorial](https://cloud.google.com/appengine/docs/standard/python/quickstart).

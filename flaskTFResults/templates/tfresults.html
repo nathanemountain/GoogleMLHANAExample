@@ -1,0 +1,35 @@
+<h1>Tensor Flow Results From SAP HANA Express!</h1>
+</br>
+</br>
+<table style="width:100%">
+  <tr>
+    <th>ACCURACY</th>
+    <th>ACCURACY BASELINE </br> LABEL MEAN</th>
+    <th>ACCURACY THRESHOLD </br> MEAN</th>
+    <th>AUC</th>
+    <th>GLOBAL STEP</th>
+    <th>LABEL ACTUAL </br> MEAN</th>
+    <th>LABEL PREDICTION</br> MEAN</th>
+    <th>LOSS</th>
+    <th>PRECISION</th>
+    <th>RECALL</th>
+    <th>DATE</th>
+  </tr>
+</br>
+  {% for p in results:%}
+      <tr>
+        <td> {{ p[1] }}</td>
+        <td> {{ p[2] }}</td>
+        <td> {{ p[3] }}</td>
+        <td> {{ p[4] }}</td>
+        <td> {{ p[5] }}</td>
+        <td> {{ p[6] }}</td>
+        <td> {{ p[7] }}</td>
+        <td> {{ p[8] }}</td>
+        <td> {{ p[9] }}</td>
+        <td> {{ p[10] }}</td>
+        <td> {{ p[0] }}</td>
+
+      </tr>
+  {% endfor %}
+</table>
