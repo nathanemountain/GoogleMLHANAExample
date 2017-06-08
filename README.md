@@ -116,7 +116,7 @@ def readDataFromSAPHana():
     return (trainData, testData)
 
 ```
-## Execute the Application
+## Execute the ML Computation
 
 1. Run the following command:
 
