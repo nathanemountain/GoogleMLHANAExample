@@ -44,7 +44,7 @@ There are two files to import into your HANA database.
  
 Here are three different options for loading the data. Option 1 is for loading data from the client. Option 2a and 2b require that you have ftp or scp access to the HANA database server.
 
-Option 1: Follow this [Tutorial to Import CSV File into SAP HANA](https://archive.sap.com/documents/docs/DOC-27960) if you want to install the data to the server using [HANA Tools](https://tools.hana.ondemand.com/#hanatools).
+Option 1: Follow this [Tutorial to Import CSV File into SAP HANA](https://archive.sap.com/documents/docs/DOC-27960) if you want to install the data to the server using [HANA Studio Plugin for Eclipse](https://tools.hana.ondemand.com/#hanatools).
 
 Option 2: FTP the data to the HANA server and then use either option 2a or option 2b to load it into the database.
 
