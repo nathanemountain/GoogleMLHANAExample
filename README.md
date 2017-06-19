@@ -19,7 +19,7 @@ description: This application shows how to use TensorFlow with HANA.
 
 `pip install virtualenv`
 
-4. Clone the [HANATensorFlowExample git repository](https://github.com/hxeml/GoogleMLHANAExample) or download and extract the zip file.
+4. Clone this repository or download and extract the zip file.
 
 5. Run the following commands to create and activate your virtual environment and install the tensorflow required packages.
 
