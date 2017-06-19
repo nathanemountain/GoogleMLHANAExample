@@ -19,7 +19,7 @@ description: This application shows how to use TensorFlow with HANA.
 
 `pip install virtualenv`
 
-4. Clone the [HANATensorFlowExample git repository](https://github.wdf.sap.corp/I825357/HANATensorFlowExample) or download and extract the zip file.
+4. Clone the [HANATensorFlowExample git repository](https://github.com/hxeml/GoogleMLHANAExample) or download and extract the zip file.
 
 5. Run the following commands to create and activate your virtual environment and install the tensorflow required packages.
 
@@ -44,7 +44,7 @@ There are two files to import into your HANA database.
  
 Here are three different options for loading the data. Option 1 is for loading data from the client. Option 2a and 2b require that you have ftp or scp access to the HANA database server.
 
-Option 1: Follow this [Tutorial to Import CSV File into SAP HANA](https://archive.sap.com/documents/docs/DOC-27960) if you want to install the data to the server using [HANA Studio Plugin for Eclipse](https://tools.hana.ondemand.com/#hanatools).
+Option 1: Follow this [Tutorial to Import CSV File into SAP HANA](https://archive.sap.com/documents/docs/DOC-27960) if you want to install the data to the server using [HANA Studio Plugin for Eclipse](https://tools.hana.ondemand.com/#hanatools). Alternatively, you can watch the following [SAP HANA Academy tutorial](https://www.youtube.com/watch?v=4B55DrzFyIM) for instructions on loading from a csv file.
 
 Option 2: FTP the data to the HANA server and then use either option 2a or option 2b to load it into the database.
 
