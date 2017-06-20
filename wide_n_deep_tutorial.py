@@ -28,8 +28,10 @@ import tensorflow as tf
 #New Import Statements
 import pyhdb
 import os
+import util
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+tf.logging.set_verbosity(tf.logging.ERROR)
 
 #End Imports
 
@@ -140,7 +142,11 @@ def input_fn(df):
 
 def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
   """Train and evaluate the model."""
-  df_train, df_test = readDataFromSAPHana()
+  print("--------------------------------------------------------------------------")
+  print("--------------------------------------------------------------------------")
+  print("Running Tensor Flow... \n")
+  params = util.getParamsFromFile()
+  df_train, df_test = readDataFromSAPHana(params)
 
   # remove NaN elements
   df_train = df_train.dropna(how='any', axis=0)
@@ -152,42 +158,46 @@ def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
       df_test["income_bracket"].apply(lambda x: ">50K" in x)).astype(int)
 
   model_dir = tempfile.mkdtemp() if not model_dir else model_dir
-  print("model directory = %s" % model_dir)
 
   m = build_estimator(model_dir, model_type)
+  print("Training the Tensor Flow Predictor... \n")
   m.fit(input_fn=lambda: input_fn(df_train), steps=train_steps)
+  print("Evaluating Test Data... \n")
   results = m.evaluate(input_fn=lambda: input_fn(df_test), steps=1)
+  InsertDataToSAPHana(results, params)
   print("--------------------------------------------------------------------------")
   print("--------------------------------------------------------------------------")
-
-  # for key in sorted(results):
-  #   print("%s :: %s" % (key, results[key]))
-  InsertDataToSAPHana(results)
-
+  print("Results inserted into HANA Database. Use the Web Application to read the results.")
   print("--------------------------------------------------------------------------")
   print("--------------------------------------------------------------------------")
 
 FLAGS = None
 
 
-def getConnection():
+def getConnection(params):
+    hostname = params[util.HOSTNAME]
+    host_port = params[util.PORT]
+    username = params[util.USER]
+    u_password = params[util.PASSWORD]
     myConnection = pyhdb.connect(
           # replace with the ip address of your HXE Host (This may be a virtual machine)
-          host='<YOUR_HXE_HOST_NAME>',
+          host=hostname,
           # 39013 is the systemDB port for HXE on the default instance of 90.
           # Replace 90 with your instance number as needed (e.g. 30013 for instance 00)
-          port=39015,
+          port=int(host_port),
           #Replace user and password with your user and password.
-          user='USER_ID',
-          password='USER_PASSWORD'
+          user=username,
+          password=u_password
           )
     return myConnection
 
 
-def InsertDataToSAPHana(results):
-    connection = getConnection()
+def InsertDataToSAPHana(results, params):
+    connection = getConnection(params)
+    tensor_schema = params[util.TENSOR_SCHEMA]
+    tensor_result_table = params[util.TENSOR_RESULT_TABLE]
 
-    insertStatement = "INSERT INTO <YOUR_SCHEMA>.TENSORFLOWRESULT VALUES"
+    insertStatement = "INSERT INTO " + tensor_schema + "." + tensor_result_table + " VALUES"
     insertStatement += "("
     insertStatement += "CURRENT_TIMESTAMP, "
     for key in sorted(results):
@@ -197,18 +207,20 @@ def InsertDataToSAPHana(results):
       insertStatement += ","
     insertStatement = insertStatement[:-1]
     insertStatement += ")"
-    print (insertStatement)
     cursor = connection.cursor()
     #This is the data used to Train the Tensor Flow model
     cursor.execute(insertStatement)
-    print(str(cursor.rowcount) + " rows inserted")
     connection.commit()
     cursor.close()
 
     return
 
-def readDataFromSAPHana():
-    connection = getConnection()
+def readDataFromSAPHana(params):
+    print("Reading Training and Test Data from HANA... \n")
+    connection = getConnection(params)
+    tensor_schema = params[util.TENSOR_SCHEMA]
+    tensor_training_data_table = params[util.TENSOR_TRAINING_DATA_TABLE]
+    tensor_test_data_table = params[util.TENSOR_TEST_DATA_TABLE]
 
     if not connection.isconnected():
         return 'HANA Server not accessible'
@@ -216,7 +228,7 @@ def readDataFromSAPHana():
 
     cursor = connection.cursor()
     #This is the data used to Train the Tensor Flow model
-    cursor.execute("SELECT * FROM <YOUR_SCHEMA>.TENSORDATA")
+    cursor.execute("SELECT * FROM " + tensor_schema + "." +  tensor_training_data_table)
     myData = cursor.fetchall()
     trainData = pd.DataFrame(myData)
     trainData.columns = COLUMNS
@@ -224,7 +236,7 @@ def readDataFromSAPHana():
 
     #This is the data used to Test the Tensor Flow model
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM <YOUR_SCHEMA>.TENSORTESTDATA")
+    cursor.execute("SELECT * FROM " + tensor_schema + "." +  tensor_test_data_table)
     myData = cursor.fetchall()
     testData = pd.DataFrame(myData)
     testData.columns = COLUMNS
@@ -273,6 +285,3 @@ if __name__ == "__main__":
   )
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
-
-
-

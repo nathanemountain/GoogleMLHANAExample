@@ -70,97 +70,44 @@ Option 2b: Load the data on the server using HANA's command line `hdbsql` utilit
 - Run the hdbsql utility and point to the tensordata.sql file.
 --  hdbsql -u <Your User> -d <YourDatabase> -p <YourPassword> -i <YourInstance> -I tensordata.sql
 
-## Edit the Python File
+## Edit the Config File
 
-1. Make the following edits to the `readDataFromSAPHana` function of the *wide_n_deep_tutorial.py* file.
+1. Open the `params.config` file.  It should look like below.
 
-  - Replace the YOUR_HXE_HOST_NAME, USER_ID, USER_PASSWORD with your values.
-  - Replace the YOUR_SCHEMA with your values.
-  - If you are not using a multi-tenant HANA Database with instance number 90, you will also need to change your port.
+  `HOSTNAME=<YOUR_HOSTNAME>`
+
+  `PORT=<YOUR_PORT>`
+
+  `USER=<YOUR_USER>`
+
+  `PASSWORD=<YOUR_PASSWORD>`
+
+  `TENSOR_SCHEMA=<YOUR_SCHEMA>`
+
+  `TENSOR_TRAINING_DATA_TABLE=<YOUR_TENSOR_TRAINING_DATA_TABLE>`
+
+  `TENSOR_TEST_DATA_TABLE=<YOUR_TENSOR_TEST_DATA_TABLE>`
+
+  `TENSOR_RESULT_TABLE=<YOUR_TENSOR_RESULT_TABLE>`
 
 
-```
-def readDataFromSAPHana():
-    connection = pyhdb.connect(
-          # replace with the ip address of your HXE Host (This may be a virtual machine)
-          host='<YOUR_HXE_HOST_NAME>',
-          # 39013 is the systemDB port for HXE on the default instance of 90.
-          # Replace 90 with your instance number as needed (e.g. 30013 for instance 00)
-          port=39013,
-          #Replace user and password with your user and password.
-          user='<USER_ID>',
-          password='<USER_PASSWORD'>
-          )
-    if not connection.isconnected():
-        return 'HANA Server not accessible'
-    #Connect to the database
+- Replace the `YOUR_HOST_NAME, YOUR_PORT, YOUR_USER, YOUR_PASSWORD` with your values for where the Hana Express is deployed.
 
-    cursor = connection.cursor()
-    #This is the data used to Train the Tensor Flow model
-    cursor.execute("SELECT * FROM <YOUR_SCHEMA>.TENSORDATA")
-    myData = cursor.fetchall()
-    trainData = pd.DataFrame(myData)
-    trainData.columns = COLUMNS
-    cursor.close()
+- Replace the `YOUR_SCHEMA, YOUR_TENSOR_TRAINING_DATA_TABLE, YOUR_TENSOR_TEST_DATA_TABLE, YOUR_TENSOR_RESULT_TABLE` with the values you gave in the previous steps.
 
-    #This is the data used to Test the Tensor Flow model
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM <YOUR_SCHEMA>.TENSORTESTDATA")
-    myData = cursor.fetchall()
-    testData = pd.DataFrame(myData)
-    testData.columns = COLUMNS
+- Note: The System Database port is 3`<instance_number>`13 and Tenant Database port is 3`<instance_number>`15.
 
-    # print (xx)
-    #Close the cursor
-    cursor.close()
-    return (trainData, testData)
 
-```
-## Execute the ML Computation
+## Execute the Application
 
 1. Run the following command:
 
 `python wide_n_deep_tutorial.py --model_type=wide`
 
-2. The application has inserted results back into the database table named as `TENSORFLOWRESULT`.
+2. When the application executes successfully it inserts the results into the database table provided in the config file.
 
-## Deploy as a Flask Application
+## Deploy a Flask Application to view results.
 
-1. Navigate into *flaskTFResults* folder and locate the *main.py* file. Make the following edits to the `readDataFromSAPHana` and `getConnection` function of the *main.py* file.
-
-  - Replace the YOUR_HXE_HOST_NAME, USER_ID, USER_PASSWORD with your values.
-  - Replace the YOUR_SCHEMA with your values.
-  - If you are not using a multi-tenant HANA Database with instance number 90, you will also need to change your port.
-
-```
-def readDataFromSAPHana():
-    connection = getConnection()
-
-    if not connection.isconnected():
-        return 'HANA Server not accessible'
-    #Connect to the database
-
-    cursor = connection.cursor()
-    #This is the data used to Train the Tensor Flow model
-    cursor.execute("SELECT * FROM <YOUR_SCHEMA>.TENSORFLOWRESULT")
-    myData = cursor.fetchall()
-    cursor.close()
-    print(myData)
-    return myData
-
-def getConnection():
-    myConnection = db.connect(
-          # replace with the ip address of your HXE Host (This may be a virtual machine)
-          host='<HXE_HOST>',
-          # 39013 is the systemDB port for HXE on the default instance of 90.
-          # Replace 90 with your instance number as needed (e.g. 30013 for instance 00)
-          port=39015,
-          #Replace user and password with your user and password.
-          user='<USER_ID>',
-          password='<PASSWORD>'
-          )
-    return myConnection
-
-```
+1. Navigate into *flaskTFResults* folder.
 
 2. This app can then be deployed on Google Cloud App Engine. Follow this [tutorial](https://cloud.google.com/appengine/docs/standard/python/quickstart).

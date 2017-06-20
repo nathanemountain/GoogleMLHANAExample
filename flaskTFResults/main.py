@@ -4,6 +4,9 @@ import logging
 # [START imports]
 from flask import Flask, render_template, request
 import pyhdb as db
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import util
 # [END imports]
 
 # [START create_app]
@@ -22,7 +25,10 @@ def getResultsFromHANA():
 
 
 def readDataFromSAPHana():
-    connection = getConnection()
+    params = util.getParamsFromFile()
+    connection = getConnection(params)
+    tensor_schema = params[util.TENSOR_SCHEMA]
+    tensor_result_table = params[util.TENSOR_RESULT_TABLE]
 
     if not connection.isconnected():
         return 'HANA Server not accessible'
@@ -30,22 +36,26 @@ def readDataFromSAPHana():
 
     cursor = connection.cursor()
     #This is the data used to Train the Tensor Flow model
-    cursor.execute("SELECT * FROM <YOUR_SCHEMA>.TENSORFLOWRESULT")
+    cursor.execute("SELECT * FROM " + tensor_schema + "." + tensor_result_table)
     myData = cursor.fetchall()
     cursor.close()
     print(myData)
     return myData
 
-def getConnection():
+def getConnection(params):
+    hostname = params[util.HOSTNAME]
+    host_port = params[util.PORT]
+    username = params[util.USER]
+    u_password = params[util.PASSWORD]
     myConnection = db.connect(
           # replace with the ip address of your HXE Host (This may be a virtual machine)
-          host='<HXE_HOST>',
+          host=hostname,
           # 39013 is the systemDB port for HXE on the default instance of 90.
           # Replace 90 with your instance number as needed (e.g. 30013 for instance 00)
-          port=39015,
+          port=int(host_port),
           #Replace user and password with your user and password.
-          user='<USER_ID>',
-          password='<PASSWORD>'
+          user=username,
+          password=u_password
           )
     return myConnection
 
@@ -57,4 +67,5 @@ def server_error(e):
 # [END app]
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=80)
+  # app.run(host='0.0.0.0', port=80)
+  app.run()
