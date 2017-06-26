@@ -66,6 +66,19 @@ function readParamFile {
 # Return an error if it is invalid.
 #########################################################################################
 function executeSQL {
+
+   while [ 1 ] ; do
+		read -p "This script will drop the schema ${TENSOR_SCHEMA} before recreating it. This will result in a loss of all data and entities in that schema. Are you sure you want to continue? (Y/N): " tmp
+		if [ "$tmp" == "Y" -o "$tmp" == "y" ]; then
+			break
+		elif [ "$tmp" == "N" -o "$tmp" == "n" ]; then
+			echo "You cancelled script execution. No database objects were changed."
+			echo ""
+			return 0
+		else
+			echo "Invalid input.  Enter \"Y\" or \"N\"."
+		fi
+	done
     
     echo Connecting on ${HOSTNAME}:${PORT} as ${USER}...
     echo
