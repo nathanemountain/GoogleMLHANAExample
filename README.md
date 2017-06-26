@@ -72,28 +72,28 @@ Option 2b: Load the data on the server using HANA's command line `hdbsql` utilit
 
 ## Edit the Config File
 
-1. Open the `params.config` file.  It should look like below.
+1. Open the `params.config` file.  It has been filled in with default values for a HANA Express System Database. 
 
-  `HOSTNAME=<YOUR_HOSTNAME>`
+  `HOSTNAME=hxehost`
 
-  `PORT=<YOUR_PORT>`
+  `PORT=39013`
 
-  `USER=<YOUR_USER>`
+  `USER=system`
 
-  `PASSWORD=<YOUR_PASSWORD>`
+  `PASSWORD=MyPassword`
 
-  `TENSOR_SCHEMA=<YOUR_SCHEMA>`
+  `TENSOR_SCHEMA=TENSORFLOW`
 
-  `TENSOR_TRAINING_DATA_TABLE=<YOUR_TENSOR_TRAINING_DATA_TABLE>`
+  `TENSOR_TRAINING_DATA_TABLE=TENSORDATA`
 
-  `TENSOR_TEST_DATA_TABLE=<YOUR_TENSOR_TEST_DATA_TABLE>`
+  `TENSOR_TEST_DATA_TABLE=TENSORTESTDATA`
 
-  `TENSOR_RESULT_TABLE=<YOUR_TENSOR_RESULT_TABLE>`
+  `TENSOR_RESULT_TABLE=TENSORFLOWRESULT`
 
 
-- Replace the `YOUR_HOST_NAME, YOUR_PORT, YOUR_USER, YOUR_PASSWORD` with your values for where the Hana Express is deployed.
+- Replace the `HOSTNAME, PORT, USER, PASSWORD` with your values for where the Hana Express is deployed.
 
-- Replace the `YOUR_SCHEMA, YOUR_TENSOR_TRAINING_DATA_TABLE, YOUR_TENSOR_TEST_DATA_TABLE, YOUR_TENSOR_RESULT_TABLE` with the values you gave in the previous steps.
+- Replace the `TENSOR_SCHEMA, TENSOR_TRAINING_DATA_TABLE, TENSOR_TEST_DATA_TABLE, TENSOR_RESULT_TABLE` with the values you gave in the previous steps.
 
 - Note: The System Database port is 3`<instance_number>`13 and Tenant Database port is 3`<instance_number>`15.
 
