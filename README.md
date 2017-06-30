@@ -3,31 +3,34 @@ title: HANA TensorFlow Example
 description: This application shows how to use TensorFlow with HANA.
 ---
 ## Prerequisites
- - A `HANA, express edition` database server must be running and accessible.
- - Familiarity with the Python language.
+ - A `HANA, express edition` database server must be set up, running and accessible on the Google Cloud Platform. Instructions on how to set up HANA, express edition on the Google Cloud Platform can be found [here](https://ideas.sap.com/ct/d.bix?c=A0DDEEB6-D896-4150-AF25-C755FCAF4E1C)
+ - Familiarity with the Python language. Should we also state that Python, TensorFlow, and any other tools should be installed?
 
 ### Time to Complete
 **25 Min**
 
 ## Prepare Your Environment
 
-1. Create a directory called HanaTensorFlow.
+1. Open the Google Cloud Platform (GCP) in a browser. From the home page, look for the Resources tile, and click Compute Engine. 
 
-2. Navigate to the newly created directory, HanaTensorFlow.
+2. Locate the HANA, express edition (HXE) database you wish to work on. Select it by clicking in the box and then click start to begin running the instance. A pop up window will appear stating "You will be billed for this instance while it is running. Are you sure you want to start instance "sap-hanaexpress-public-1-vm"? This counts toward the $300 free trail, remember to stop the instance when not using it. 
 
-3. If you do not have *virtualenv* installed, execute the following command:
+3. Click on the SSH drop down menu and select "open in browser window". You can use any SSH client you would like, but for the purposes of this tutorial it is assumed that the browser option selected.  
 
-`pip install virtualenv`
+4. Log in as hxeadm. 
 
-4. Clone this repository or download and extract the zip file.
+5. From the SSH browser client, create a directory called HanaTensorFlow. Command line `mkdir HanaTensorFlow`. Confirm file path.
 
-5. Run the following commands to create and activate your virtual environment and install the tensorflow required packages.
+6. Navigate to the newly created directory, HanaTensorFlow.
 
+7. Clone this repository: 
+`you run git <URL with github link>`
+
+8. Run the following commands to create and activate your virtual environment and install the tensorflow required packages:
 `virtualenv env`
-
 `source env/bin/activate`
 
-Note : If you are running Windows : it would be `source env/Scripts/activate`
+9. Execute the following commands to install TensorFlow, Python and Pandas:
 
 `pip install tensorflow`
 
@@ -36,34 +39,11 @@ Note : If you are running Windows : it would be `source env/Scripts/activate`
 `pip install pandas`
 
 ## Load Training and Testing Data
+There are two files to import into your HANA database.
+- tensordata.csv: This file contains the tensorflow training data to train the model.
+- tensortestdata.csv: This contains the testdata to exercise the model.
 
-There are two files to import into your HANA database. 
-
- - tensordata.csv: This file contains the tensorflow training data to train the model.
- - tensortestdata.csv: This contains the testdata to exercise the model.
- 
-Here are three different options for loading the data. Option 1 is for loading data from the client. Option 2a and 2b require that you have ftp or scp access to the HANA database server.
-
-Option 1: Follow this [Tutorial to Import CSV File into SAP HANA](https://archive.sap.com/documents/docs/DOC-27960) if you want to install the data to the server using [HANA Studio Plugin for Eclipse](https://tools.hana.ondemand.com/#hanatools). Alternatively, you can watch the following [SAP HANA Academy tutorial](https://www.youtube.com/watch?v=4B55DrzFyIM) for instructions on loading from a csv file.
-
-Option 2: FTP the data to the HANA server and then use either option 2a or option 2b to load it into the database.
-
-- Create a data directory on the HANA server. 
-- Upload the following files to this directory:
--- load_data.sh
--- tensordata.csv
--- tensortestdata.csv
--- tensordata.sql
-
-- Make sure you are logged in as a user with rights to execute the hdbsql utility. You can use the sid adm user. On the HANA Express database, this is the user `hxeadm`.
-
-Option 2a: Load the data using the load_data.sh script.
-
-- Navigate to the data directory created above. 
-- Make the load_data.sh file executable: chmod a+x load_data.sh.
-- Run the load_data.sh script using the instructions explained in the load_data.sh help: "load_data.sh -h".
-
-Option 2b: Load the data on the server using HANA's command line `hdbsql` utility. 
+Load the data on the server using HANA's command line `hdbsql` utility. 
 
 - Navigate to the data directory created above. 
 - Read the instructions in the tensordata.sql file to see what values to change. Make the changes and save.
